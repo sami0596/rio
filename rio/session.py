@@ -2875,14 +2875,9 @@ a.remove();
         """
 
         # Prepare a build function
-        #
-        # TODO: Display the buttons below each other on small displays
         def build_content() -> rio.Component:
-            outer_margin = 0.8
-            inner_margin = 0.4
-
             main_column = rio.Column(
-                spacing=inner_margin,
+                spacing=1.0,
             )
 
             # Title & Icon
@@ -2894,7 +2889,7 @@ a.remove();
                 title_components.append(
                     rio.Icon(
                         icon,
-                        # FIXME: This is techincally wrong, since the heading
+                        # FIXME: This is technically wrong, since the heading
                         # style could be filled with something other than a
                         # valid icon color. What to do?
                         fill=self.theme.heading2_style.fill,  # type: ignore
@@ -2917,9 +2912,9 @@ a.remove();
                 main_column.add(
                     rio.Row(
                         *title_components,
-                        spacing=inner_margin,
-                        margin_x=outer_margin,
-                        margin_top=outer_margin,
+                        spacing=1.0,
+                        margin_x=2.0,
+                        margin_top=2.0,
                     )
                 )
 
@@ -2927,18 +2922,16 @@ a.remove();
             main_column.add(
                 rio.Markdown(
                     text,
-                    margin_x=outer_margin,
-                    margin_top=0 if title_components else outer_margin,
+                    margin_x=2.0,
+                    margin_top=0 if title_components else 2.0,
                 ),
-            )
-
-            # Spacer between content and buttons
-            main_column.add(
-                rio.Spacer(min_height=1.5, grow_y=False),
             )
 
             # Buttons for mobile and desktop
             if self.window_width < 60:
+                shadow_radius = 1.6
+                align_y = 0.5
+
                 main_column.add(
                     rio.Column(
                         rio.Button(
@@ -2947,22 +2940,28 @@ a.remove();
                             style=(
                                 "major" if default is True else "colored-text"
                             ),
+                            shape="rounded",
                             on_press=lambda: dialog.close(True),
                         ),
                         rio.Button(
                             no_text,
                             color=no_color,
                             style=(
-                                "major" if default is True else "colored-text"
+                                "major" if default is False else "colored-text"
                             ),
+                            shape="rounded",
                             on_press=lambda: dialog.close(False),
                         ),
-                        spacing=inner_margin,
-                        margin_x=5,
-                        margin_top=0,
+                        spacing=1.0,
+                        margin_x=5.0,
+                        margin_top=1,
+                        margin_bottom=1.5,
                     ),
                 )
             else:
+                shadow_radius = 2.0
+                align_y = 0.35
+
                 main_column.add(
                     rio.Row(
                         rio.Button(
@@ -2971,28 +2970,35 @@ a.remove();
                             style=(
                                 "major" if default is True else "colored-text"
                             ),
+                            shape="rounded",
                             on_press=lambda: dialog.close(True),
                         ),
                         rio.Button(
                             no_text,
                             color=no_color,
                             style=(
-                                "major" if default is True else "colored-text"
+                                "major" if default is False else "colored-text"
                             ),
+                            shape="rounded",
                             on_press=lambda: dialog.close(False),
                         ),
-                        spacing=inner_margin,
-                        margin=outer_margin,
-                        margin_top=0,
+                        spacing=1.0,
+                        margin=1.0,
+                        margin_top=1,
                         margin_left=5,
+                        align_x=1,
                     ),
                 )
 
             # Combine everything
-            return rio.Card(
-                main_column,
+            return rio.Rectangle(
+                content=rio.ThemeContextSwitcher(main_column, "neutral"),
+                fill=self.theme.neutral_color,
+                corner_radius=self.theme.corner_radius_medium,
+                shadow_radius=shadow_radius,
+                shadow_offset_y=1.0,
                 align_x=0.5,
-                align_y=0.35,
+                align_y=align_y,
             )
 
         # Display the dialog
