@@ -354,7 +354,7 @@ class App:
         if isinstance(base_url, str):
             base_url = rio.URL(base_url)
 
-        # We're starting! We can't delay loading the pages any longer.
+        # We're starting! Can't delay loading the pages any longer.
         self._load_pages()
 
         # Build the fastapi instance
